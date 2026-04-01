@@ -7,7 +7,9 @@ All {% term automations %} are made up of a {% term trigger %} and an {% term ac
 
 > When Paulus arrives home and it is after sunset: Turn the lights on in the living room.
 
-We can break up this automation into the following three parts:
+## Parts of an automation
+
+We can break up the previous automation example into the following three parts:
 
 ```text
 (trigger)    When Paulus arrives home
@@ -15,11 +17,34 @@ We can break up this automation into the following three parts:
 (action)     Turn the lights on in the living room
 ```
 
-The first part is the [trigger](/docs/automation/trigger/) of the automation. Triggers describe {% term events %} that should trigger the automation. In this case, it is a person arriving home, which can be observed in Home Assistant using {% term devices %}/{% term sensors %} by observing the state of Paulus changing from `not_home` to `home`.
+Each part has an {% term event %} and a target. The event is what happens and the target is the subject the event is aimed at. The target can be an entity, a device, a service or a group of them. You can see examples in the following sections.
+
+### Trigger
+
+The [trigger](/docs/automation/trigger/) is the first part of the automation. An automation must have one trigger and can have more than one. A trigger describes an {% term event %}, directed to a target, that should start an automation. In the example of the automation above, the trigger _When Paulus arrives home_ has:
+
+- the target: _Paulus_.
+- the event: _arrives home_.
+
+A person arriving home can be tracked in Home Assistant using {% term devices %}/{% term sensors %}, that observes the state of Paulus changing from `not_home` to `home`.
+
+### Condition
 
 The second part is the [condition](/docs/automation/condition/). Conditions are optional tests that can limit an automation to only work in your specific use cases. A condition will test against the current state of the system. This includes the current time, devices, people and other things like the sun. In this case, we only want to act when the sun has set.
 
-The third part is the [action](/docs/automation/action/), which will be performed when an automation is triggered and all conditions are met. For example, it can turn a light on, set the temperature on your thermostat or activate a scene.
+In the example of the automation above, the condition _and it is after sunset_ has:
+
+- the implicit target: _time_.
+- the event: _is after sunset_.
+
+### Action
+
+The third part is the [action](/docs/automation/action/), which will be performed when an automation is triggered and all conditions are met. For example, it can turn a light on, set the temperature on your thermostat or activate a scene. An automation must have an action and can have more than one.
+
+In the example of the automation above, the action _Turn the lights on in the living room_ has:
+
+- the target: _lights in the living room_.
+- the event: _turn on_.
 
 {% note %}
 The difference between a trigger and a condition can be confusing as they are very similar.
@@ -44,7 +69,7 @@ Automations interact directly with the internal state of Home Assistant, so you'
 
 State changes can be used as the source of triggers and the current state can be used in conditions.
 
-To explore the available *actions* open the {% my developer_services title="**Settings** > **Developer tools** > **Actions**" %}. *Actions* allow changing anything. For example, turn on a light, run a script, or enable a scene. Each *action* has a domain and a name. For example, the *action* {% my developer_call_service service="light.turn_on" %} is capable of turning on any light in your system. Parameters can be passed to an *action* to indicate, for example, which device to activate or which color to use.
+To explore the available _actions_, open the {% my developer_services title="**Settings** > **Developer tools** > **Actions**" %}. _Actions_ allow changing anything. For example, turn on a light, run a script, or enable a scene. Each _action_ has a domain and a name. For example, the _action_ {% my developer_call_service service="light.turn_on" %} is capable of turning on any light in your system. Parameters can be passed to an _action_ to indicate, for example, which device to activate or which color to use.
 
 ## Creating automations
 
