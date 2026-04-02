@@ -17,7 +17,7 @@ We can break up the previous automation example into the following three parts:
 (action)     Turn the lights on in the living room
 ```
 
-Each part has an {% term event %} and a target. The event is what happens and the target is the subject the event is aimed at. The target can be an entity, a device, a service or a group of them. You can see examples in the following sections.
+Each part has an {% term event %} and a target. The event is what happens and the target is the subject the event is aimed at. The target can be an {% term entity %}, a {% term device %}, a {% term service %} or a group of them. You can see examples in the following sections.
 
 ### Trigger
 
