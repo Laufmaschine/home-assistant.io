@@ -10,15 +10,22 @@ Triggers are what starts the processing of an {% term automation %} rule. When _
 
 An {% term automation %} can be triggered by an {% term event %}, a certain {% term entity %} {% term state %}, at a given time, and more. These can be specified directly or more flexible via templates. It is also possible to specify multiple triggers for one automation.
 
-- [The elements of a trigger in the YAML file](#the-elements-of-a-trigger-in-the-yaml-file)
+- [Elements of a trigger in the YAML file](#elements-of-a-trigger-in-the-yaml-file)
   - [Trigger ID](#trigger-id)
     - [Video tutorial](#video-tutorial)
   - [Trigger variables](#trigger-variables)
 - [Types of triggers](#types-of-triggers)
+  - [Calendar trigger](#calendar-trigger)
+  - [Device triggers](#device-triggers)
   - [Event trigger](#event-trigger)
+  - [Geolocation trigger](#geolocation-trigger)
   - [Home Assistant trigger](#home-assistant-trigger)
   - [MQTT trigger](#mqtt-trigger)
   - [Numeric state trigger](#numeric-state-trigger)
+  - [Persistent notification trigger](#persistent-notification-trigger)
+  - [Sentence trigger](#sentence-trigger)
+    - [Related topic](#related-topic)
+    - [Sentence wildcards](#sentence-wildcards)
   - [State trigger](#state-trigger)
     - [Examples](#examples)
     - [Triggering on attribute changes](#triggering-on-attribute-changes)
@@ -28,6 +35,7 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
     - [Sun elevation trigger](#sun-elevation-trigger)
   - [Tag trigger](#tag-trigger)
   - [Template trigger](#template-trigger)
+  - [Time pattern trigger](#time-pattern-trigger)
   - [Time trigger](#time-trigger)
     - [Time string](#time-string)
     - [Input datetime](#input-datetime)
@@ -40,30 +48,22 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
       - [Multiple weekdays](#multiple-weekdays)
       - [Weekend example](#weekend-example)
       - [Combined with input datetime](#combined-with-input-datetime)
-  - [Time pattern trigger](#time-pattern-trigger)
-  - [Persistent notification trigger](#persistent-notification-trigger)
   - [Webhook trigger](#webhook-trigger)
     - [Webhook data](#webhook-data)
     - [Webhook security](#webhook-security)
   - [Zone trigger](#zone-trigger)
-  - [Geolocation trigger](#geolocation-trigger)
   - [Entity triggers](#entity-triggers)
     - [Entity trigger YAML structure](#entity-trigger-yaml-structure)
     - [Unavailable and unknown state behavior](#unavailable-and-unknown-state-behavior)
     - [List of entity trigger types](#list-of-entity-trigger-types)
     - [Example: Trigger when bedroom humidity rises above 70%](#example-trigger-when-bedroom-humidity-rises-above-70)
     - [Example: Trigger when the living room light turns on](#example-trigger-when-the-living-room-light-turns-on)
-  - [Device triggers](#device-triggers)
-  - [Calendar trigger](#calendar-trigger)
-  - [Sentence trigger](#sentence-trigger)
-    - [Related topic](#related-topic)
-    - [Sentence wildcards](#sentence-wildcards)
 - [Multiple triggers](#multiple-triggers)
 - [Multiple entity IDs for the same trigger](#multiple-entity-ids-for-the-same-trigger)
 - [Disabling a trigger](#disabling-a-trigger)
 - [Merging lists of triggers](#merging-lists-of-triggers)
 
-## The elements of a trigger in the YAML file
+## Elements of a trigger in the YAML file
 
 The main elements of a trigger that are defined in the YAML file are:
 
@@ -125,6 +125,38 @@ automation:
 
 Each trigger has a type that depends on the target of the trigger. The following types are available.
 
+### Calendar trigger
+
+Calendar trigger fires when a [Calendar](/integrations/calendar/) event starts or ends, allowing
+for much more flexible automations than using the Calendar entity state which only supports a single
+event start at a time.
+
+An optional time offset can be given to have it fire a set time before or after the calendar event (such as 5 minutes before event start).
+
+```yaml
+automation:
+  triggers:
+    - trigger: calendar
+      # Possible values: start, end
+      event: start
+      # The calendar entity_id
+      entity_id: calendar.light_schedule
+      # Optional time offset
+      offset: "-00:05:00"
+```
+
+See the [Calendar](/integrations/calendar/) integration for more details on event triggers and the
+additional event data available for use by an automation.
+
+### Device triggers
+
+Device triggers encompass a set of events that are defined by an integration. This includes, for example, state changes of sensors as well as button events from remotes.
+[MQTT device triggers](/integrations/device_trigger.mqtt/) are set up through autodiscovery.
+
+In contrast to state triggers, device triggers are tied to a device and not necessarily an entity.
+To use a device trigger, set up an automation through the browser frontend.
+If you would like to use a device trigger for an automation that is not managed through the browser frontend, you can copy the YAML from the trigger widget in the frontend and paste it into your automation's trigger list.
+
 ### Event trigger
 
 An event trigger fires when an [event](/docs/configuration/events/) is being received. Events are the raw building blocks of Home Assistant. You can match events on just the event name or also require specific event data or context to be present.
@@ -178,6 +210,25 @@ automation:
 ```
 
 {% endraw %}
+
+### Geolocation trigger
+
+Geolocation trigger fires when an entity is appearing in or disappearing from a zone. Entities that are created by a [Geolocation](/integrations/geo_location/) platform support reporting GPS coordinates.
+Because entities are generated and removed by these platforms automatically, the entity ID normally cannot be predicted. Instead, this trigger requires the definition of a `source`, which is directly linked to one of the Geolocation platforms.
+
+{% tip %}
+This isn't for use with `device_tracker` entities. For those look above at the `zone` trigger.
+{% endtip %}
+
+```yaml
+automation:
+  triggers:
+    - trigger: geo_location
+      source: nsw_rural_fire_service_feed
+      zone: zone.bushfire_alert_zone
+      # Event is either enter or leave
+      event: enter # or "leave"
+```
 
 ### Home Assistant trigger
 
@@ -396,6 +447,67 @@ Use of the `for` option will not survive Home Assistant restart or the reload of
 
 If for your use case this is undesired, you could consider using the automation to set an [`input_datetime`](/integrations/input_datetime) to the desired time and then use that [`input_datetime`](/integrations/input_datetime) as an automation trigger to perform the desired actions at the set time.
 {% endimportant %}
+
+### Persistent notification trigger
+
+Persistent notification triggers are fired when a `persistent_notification` is `added` or `removed` that matches the configuration options.
+
+```yaml
+automation:
+  triggers:
+    - trigger: persistent_notification
+      update_type:
+        - added
+        - removed
+      notification_id: invalid_config
+```
+
+See the [Persistent Notification](/integrations/persistent_notification/) integration for more details on event triggers and the additional event data available for use by an automation.
+
+### Sentence trigger
+
+A sentence trigger fires when [Assist](/voice_control/) matches a sentence from a voice assistant using the default [conversation agent](/integrations/conversation/). Sentence triggers work with Home Assistant Assist. They will not work with external conversation agents such as OpenAI or Google Generative AI unless "Prefer handling commands locally" is enabled in the conversation agent settings.
+
+Sentences are allowed to use some basic [template syntax](https://developers.home-assistant.io/docs/voice/intent-recognition/template-sentence-syntax/#sentence-templates-syntax) like optional and alternative words. For example, `[it's ]party time` will match both "party time" and "it's party time".
+
+```yaml
+automation:
+  triggers:
+    - trigger: conversation
+      command:
+        - "[it's ]party time"
+        - "happy (new year|birthday)"
+```
+
+The sentences matched by this trigger will be:
+
+- party time
+- it's party time
+- happy new year
+- happy birthday
+
+Punctuation and casing are ignored, so "It's PARTY TIME!!!" will also match.
+
+#### Related topic
+
+- [Adding a custom sentence to trigger an automation](/voice_control/custom_sentences/#adding-a-custom-sentence-to-trigger-an-automation)
+
+#### Sentence wildcards
+
+Adding one or more `{lists}` to your trigger sentences will capture any text at that point in the sentence. A `slots` object will be [available in the trigger data](/docs/automation/templating#sentence).
+This allows you to match sentences with variable parts, such as album/artist names or a description of a picture.
+
+For example, the sentence `play {album} by {artist}` will match "play the white album by the beatles" and have the following variables available in the action templates:
+
+{% raw %}
+
+- `{{ trigger.slots.album }}` - "the white album"
+- `{{ trigger.slots.artist }}` - "the beatles"
+
+{% endraw %}
+
+Wildcards will match as much text as possible, which may lead to surprises: "play day by day by taken by trees" will match `album` as "day" and `artist` as "day by taken by trees".
+Including extra words in your template can help: `play {album} by artist {artist}` can now correctly match "play day by day by artist taken by trees".
 
 ### State trigger
 
@@ -724,6 +836,35 @@ Use of the `for` option will not survive Home Assistant restart or the reload of
 If for your use case this is undesired, you could consider using the automation to set an [`input_datetime`](/integrations/input_datetime) to the desired time and then use that [`input_datetime`](/integrations/input_datetime) as an automation trigger to perform the desired actions at the set time.
 {% endimportant %}
 
+### Time pattern trigger
+
+With the time pattern trigger, you can match if the hour, minute or second of the current time matches a specific value. You can prefix the value with a `/` to match whenever the value is divisible by that number. You can specify `*` to match any value.
+
+```yaml
+automation:
+  triggers:
+    - trigger: time_pattern
+      # Matches every hour at 5 minutes past whole
+      minutes: 5
+
+automation 2:
+  triggers:
+    - trigger: time_pattern
+      # Trigger once per minute during the hour of 3
+      hours: "3"
+      minutes: "*"
+
+automation 3:
+  triggers:
+    - trigger: time_pattern
+      # You can also match on interval. This will match every 5 minutes
+      minutes: "/5"
+```
+
+{% note %}
+Do not prefix numbers with a zero - using `'01'` instead of `'1'` for example will result in errors.
+{% endnote %}
+
 ### Time trigger
 
 The time trigger is configured to fire once a day at a specific time, or at a specific time on a specific date. There are three allowed formats:
@@ -960,51 +1101,6 @@ automation:
           message: "Time to start working"
 ```
 
-### Time pattern trigger
-
-With the time pattern trigger, you can match if the hour, minute or second of the current time matches a specific value. You can prefix the value with a `/` to match whenever the value is divisible by that number. You can specify `*` to match any value.
-
-```yaml
-automation:
-  triggers:
-    - trigger: time_pattern
-      # Matches every hour at 5 minutes past whole
-      minutes: 5
-
-automation 2:
-  triggers:
-    - trigger: time_pattern
-      # Trigger once per minute during the hour of 3
-      hours: "3"
-      minutes: "*"
-
-automation 3:
-  triggers:
-    - trigger: time_pattern
-      # You can also match on interval. This will match every 5 minutes
-      minutes: "/5"
-```
-
-{% note %}
-Do not prefix numbers with a zero - using `'01'` instead of `'1'` for example will result in errors.
-{% endnote %}
-
-### Persistent notification trigger
-
-Persistent notification triggers are fired when a `persistent_notification` is `added` or `removed` that matches the configuration options.
-
-```yaml
-automation:
-  triggers:
-    - trigger: persistent_notification
-      update_type:
-        - added
-        - removed
-      notification_id: invalid_config
-```
-
-See the [Persistent Notification](/integrations/persistent_notification/) integration for more details on event triggers and the additional event data available for use by an automation.
-
 ### Webhook trigger
 
 Webhook trigger fires when a web request is made to the webhook endpoint: `/api/webhook/<webhook_id>`. The webhook endpoint is created automatically when you set it as the `webhook_id` in an automation trigger. The `webhook_id` can either be a static value or computed using [limited templates](/docs/configuration/templating/#limited-templates).
@@ -1073,25 +1169,6 @@ automation:
     - trigger: zone
       entity_id: person.paulus
       zone: zone.home
-      # Event is either enter or leave
-      event: enter # or "leave"
-```
-
-### Geolocation trigger
-
-Geolocation trigger fires when an entity is appearing in or disappearing from a zone. Entities that are created by a [Geolocation](/integrations/geo_location/) platform support reporting GPS coordinates.
-Because entities are generated and removed by these platforms automatically, the entity ID normally cannot be predicted. Instead, this trigger requires the definition of a `source`, which is directly linked to one of the Geolocation platforms.
-
-{% tip %}
-This isn't for use with `device_tracker` entities. For those look above at the `zone` trigger.
-{% endtip %}
-
-```yaml
-automation:
-  triggers:
-    - trigger: geo_location
-      source: nsw_rural_fire_service_feed
-      zone: zone.bushfire_alert_zone
       # Event is either enter or leave
       event: enter # or "leave"
 ```
@@ -1170,83 +1247,6 @@ automation:
       options:
         behavior: any
 ```
-
-### Device triggers
-
-Device triggers encompass a set of events that are defined by an integration. This includes, for example, state changes of sensors as well as button events from remotes.
-[MQTT device triggers](/integrations/device_trigger.mqtt/) are set up through autodiscovery.
-
-In contrast to state triggers, device triggers are tied to a device and not necessarily an entity.
-To use a device trigger, set up an automation through the browser frontend.
-If you would like to use a device trigger for an automation that is not managed through the browser frontend, you can copy the YAML from the trigger widget in the frontend and paste it into your automation's trigger list.
-
-### Calendar trigger
-
-Calendar trigger fires when a [Calendar](/integrations/calendar/) event starts or ends, allowing
-for much more flexible automations than using the Calendar entity state which only supports a single
-event start at a time.
-
-An optional time offset can be given to have it fire a set time before or after the calendar event (such as 5 minutes before event start).
-
-```yaml
-automation:
-  triggers:
-    - trigger: calendar
-      # Possible values: start, end
-      event: start
-      # The calendar entity_id
-      entity_id: calendar.light_schedule
-      # Optional time offset
-      offset: "-00:05:00"
-```
-
-See the [Calendar](/integrations/calendar/) integration for more details on event triggers and the
-additional event data available for use by an automation.
-
-### Sentence trigger
-
-A sentence trigger fires when [Assist](/voice_control/) matches a sentence from a voice assistant using the default [conversation agent](/integrations/conversation/). Sentence triggers work with Home Assistant Assist. They will not work with external conversation agents such as OpenAI or Google Generative AI unless "Prefer handling commands locally" is enabled in the conversation agent settings.
-
-Sentences are allowed to use some basic [template syntax](https://developers.home-assistant.io/docs/voice/intent-recognition/template-sentence-syntax/#sentence-templates-syntax) like optional and alternative words. For example, `[it's ]party time` will match both "party time" and "it's party time".
-
-```yaml
-automation:
-  triggers:
-    - trigger: conversation
-      command:
-        - "[it's ]party time"
-        - "happy (new year|birthday)"
-```
-
-The sentences matched by this trigger will be:
-
-- party time
-- it's party time
-- happy new year
-- happy birthday
-
-Punctuation and casing are ignored, so "It's PARTY TIME!!!" will also match.
-
-#### Related topic
-
-- [Adding a custom sentence to trigger an automation](/voice_control/custom_sentences/#adding-a-custom-sentence-to-trigger-an-automation)
-
-#### Sentence wildcards
-
-Adding one or more `{lists}` to your trigger sentences will capture any text at that point in the sentence. A `slots` object will be [available in the trigger data](/docs/automation/templating#sentence).
-This allows you to match sentences with variable parts, such as album/artist names or a description of a picture.
-
-For example, the sentence `play {album} by {artist}` will match "play the white album by the beatles" and have the following variables available in the action templates:
-
-{% raw %}
-
-- `{{ trigger.slots.album }}` - "the white album"
-- `{{ trigger.slots.artist }}` - "the beatles"
-
-{% endraw %}
-
-Wildcards will match as much text as possible, which may lead to surprises: "play day by day by taken by trees" will match `album` as "day" and `artist` as "day by taken by trees".
-Including extra words in your template can help: `play {album} by artist {artist}` can now correctly match "play day by day by artist taken by trees".
 
 ## Multiple triggers
 
