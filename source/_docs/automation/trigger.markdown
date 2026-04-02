@@ -10,36 +10,71 @@ Triggers are what starts the processing of an {% term automation %} rule. When _
 
 An {% term automation %} can be triggered by an {% term event %}, a certain {% term entity %} {% term state %}, at a given time, and more. These can be specified directly or more flexible via templates. It is also possible to specify multiple triggers for one automation.
 
-- [Trigger ID](#trigger-id)
-- [Trigger variables](#trigger-variables)
-- [Event trigger](#event-trigger)
-- [Home Assistant trigger](#home-assistant-trigger)
-- [MQTT trigger](#mqtt-trigger)
-- [Numeric state trigger](#numeric-state-trigger)
-- [State trigger](#state-trigger)
-- [Sun trigger](#sun-trigger)
-- [Tag trigger](#tag-trigger)
-- [Template trigger](#template-trigger)
-- [Time trigger](#time-trigger)
-- [Time pattern trigger](#time-pattern-trigger)
-- [Persistent notification trigger](#persistent-notification-trigger)
-- [Webhook trigger](#webhook-trigger)
-- [Zone trigger](#zone-trigger)
-- [Geolocation trigger](#geolocation-trigger)
-- [Entity triggers](#entity-triggers)
-- [Device triggers](#device-triggers)
-- [Calendar trigger](#calendar-trigger)
-- [Sentence trigger](#sentence-trigger)
+- [The elements of a trigger in the YAML file](#the-elements-of-a-trigger-in-the-yaml-file)
+  - [Trigger ID](#trigger-id)
+    - [Video tutorial](#video-tutorial)
+  - [Trigger variables](#trigger-variables)
+- [Types of triggers](#types-of-triggers)
+  - [Event trigger](#event-trigger)
+  - [Home Assistant trigger](#home-assistant-trigger)
+  - [MQTT trigger](#mqtt-trigger)
+  - [Numeric state trigger](#numeric-state-trigger)
+  - [State trigger](#state-trigger)
+    - [Examples](#examples)
+    - [Triggering on attribute changes](#triggering-on-attribute-changes)
+    - [Holding a state or attribute](#holding-a-state-or-attribute)
+  - [Sun trigger](#sun-trigger)
+    - [Sunset and Sunrise trigger](#sunset-and-sunrise-trigger)
+    - [Sun elevation trigger](#sun-elevation-trigger)
+  - [Tag trigger](#tag-trigger)
+  - [Template trigger](#template-trigger)
+  - [Time trigger](#time-trigger)
+    - [Time string](#time-string)
+    - [Input datetime](#input-datetime)
+    - [Sensors of datetime device class](#sensors-of-datetime-device-class)
+    - [Sensors of datetime device class with offsets](#sensors-of-datetime-device-class-with-offsets)
+    - [Multiple times](#multiple-times)
+    - [Limited templates](#limited-templates)
+    - [Weekday filtering](#weekday-filtering)
+      - [Single weekday](#single-weekday)
+      - [Multiple weekdays](#multiple-weekdays)
+      - [Weekend example](#weekend-example)
+      - [Combined with input datetime](#combined-with-input-datetime)
+  - [Time pattern trigger](#time-pattern-trigger)
+  - [Persistent notification trigger](#persistent-notification-trigger)
+  - [Webhook trigger](#webhook-trigger)
+    - [Webhook data](#webhook-data)
+    - [Webhook security](#webhook-security)
+  - [Zone trigger](#zone-trigger)
+  - [Geolocation trigger](#geolocation-trigger)
+  - [Entity triggers](#entity-triggers)
+    - [Entity trigger YAML structure](#entity-trigger-yaml-structure)
+    - [Unavailable and unknown state behavior](#unavailable-and-unknown-state-behavior)
+    - [List of entity trigger types](#list-of-entity-trigger-types)
+    - [Example: Trigger when bedroom humidity rises above 70%](#example-trigger-when-bedroom-humidity-rises-above-70)
+    - [Example: Trigger when the living room light turns on](#example-trigger-when-the-living-room-light-turns-on)
+  - [Device triggers](#device-triggers)
+  - [Calendar trigger](#calendar-trigger)
+  - [Sentence trigger](#sentence-trigger)
+    - [Related topic](#related-topic)
+    - [Sentence wildcards](#sentence-wildcards)
 - [Multiple triggers](#multiple-triggers)
-- [Multiple Entity IDs for the same Trigger](#multiple-entity-ids-for-the-same-trigger)
+- [Multiple entity IDs for the same trigger](#multiple-entity-ids-for-the-same-trigger)
 - [Disabling a trigger](#disabling-a-trigger)
 - [Merging lists of triggers](#merging-lists-of-triggers)
 
-## Trigger ID
+## The elements of a trigger in the YAML file
+
+The main elements of a trigger that are defined in the YAML file are:
+
+- trigger ID
+- trigger variables.
+
+### Trigger ID
 
 All triggers can be assigned an optional `id`. If the ID is omitted, it will instead be set to the index of the trigger. The `id` can be referenced from [trigger conditions and actions](/docs/scripts/conditions/#trigger-condition). The `id` does not have to be unique for each trigger, and it can be used to group similar triggers for use later in the automation (such as several triggers of different types that should all turn some entity on).
 
-### Video tutorial
+#### Video tutorial
 
 This video tutorial explains how trigger IDs work.
 
@@ -61,7 +96,7 @@ automation:
       to: "home"
 ```
 
-## Trigger variables
+### Trigger variables
 
 There are two different types of variables available for triggers. Both work like [script level variables](/integrations/script/#variables).
 
@@ -86,7 +121,11 @@ automation:
 
 {% endraw %}
 
-## Event trigger
+## Types of triggers
+
+Each trigger has a type that depends on the target of the trigger. The following types are available.
+
+### Event trigger
 
 An event trigger fires when an [event](/docs/configuration/events/) is being received. Events are the raw building blocks of Home Assistant. You can match events on just the event name or also require specific event data or context to be present.
 
@@ -140,7 +179,7 @@ automation:
 
 {% endraw %}
 
-## Home Assistant trigger
+### Home Assistant trigger
 
 Fires when Home Assistant starts up or shuts down.
 
@@ -156,7 +195,7 @@ automation:
 Automations triggered by the `shutdown` event have 20 seconds to run, after which they are stopped to continue with the shutdown.
 {% endnote %}
 
-## MQTT trigger
+### MQTT trigger
 
 Fires when a specific message is received on given MQTT topic. Optionally can match on the payload being sent over the topic. The default payload encoding is 'utf-8'. For images and other byte payloads use `encoding: ''` to disable payload decoding completely.
 
@@ -210,7 +249,7 @@ automation:
 
 {% endraw %}
 
-## Numeric state trigger
+### Numeric state trigger
 
 Fires when the numeric value of an entity's state (or attribute's value if using the `attribute` property, or the calculated value if using the `value_template` property) **crosses** a given threshold (equal excluded). On state change of a specified entity, attempts to parse the state as a number and fires if the value is changing from above to below or from below to above the given threshold (equal excluded).
 
@@ -358,7 +397,7 @@ Use of the `for` option will not survive Home Assistant restart or the reload of
 If for your use case this is undesired, you could consider using the automation to set an [`input_datetime`](/integrations/input_datetime) to the desired time and then use that [`input_datetime`](/integrations/input_datetime) as an automation trigger to perform the desired actions at the set time.
 {% endimportant %}
 
-## State trigger
+### State trigger
 
 In general, the state trigger fires when the state of any of given entities **changes**. The behavior is as follows:
 
@@ -373,7 +412,7 @@ In general, the state trigger fires when the state of any of given entities **ch
 The values you see in your overview will often not be the same as the actual state of the entity. For instance, the overview may show `Connected` when the underlying entity is actually `on`. You should check the state of the entity by checking the states in the developer tool, under {% my developer_states title="**Settings** > **Developer tools** > **States**" %}.
 {% endtip %}
 
-### Examples
+#### Examples
 
 This automation triggers if either Paulus or Anne-Therese are home for one minute.
 
@@ -433,7 +472,7 @@ automation:
 
 You cannot use `from` and `not_from` at the same time. The same applies to `to` and `not_to`.
 
-### Triggering on attribute changes
+#### Triggering on attribute changes
 
 When the `attribute` option is specified, the trigger only fires
 when the specified attribute **changes**. Changes to other attributes or
@@ -461,7 +500,7 @@ automation:
       attribute: hvac_action
 ```
 
-### Holding a state or attribute
+#### Holding a state or attribute
 
 You can use `for` to have the state trigger only fire if the state holds for some time.
 
@@ -541,9 +580,9 @@ The `for` template(s) will be evaluated when an entity changes as specified.
 Use quotes around your values for `from` and `to` to avoid the YAML parser from interpreting values as booleans.
 {% endtip %}
 
-## Sun trigger
+### Sun trigger
 
-### Sunset / Sunrise trigger
+#### Sunset and Sunrise trigger
 
 Fires when the sun is setting or rising—that is, when the sun elevation reaches 0°.
 
@@ -565,7 +604,7 @@ automation:
       offset: "-00:45:00"
 ```
 
-### Sun elevation trigger
+#### Sun elevation trigger
 
 Sometimes you may want more granular control over an automation than simply sunset or sunrise and specify an exact elevation of the sun. This can be used to layer automations to occur as the sun lowers on the horizon or even after it is below the horizon. This is also useful when the "sunset" event is not dark enough outside and you would like the automation to run later at a precise solar angle instead of the time offset such as turning on exterior lighting. For most automations intended to run during dusk or dawn, a number between 0° and -6° is suitable; -4° is used in this example:
 
@@ -601,7 +640,7 @@ Although the actual amount of light depends on weather, topography and land cove
 
 A very thorough explanation of this is available in the Wikipedia article about the [Twilight](https://en.wikipedia.org/wiki/Twilight).
 
-## Tag trigger
+### Tag trigger
 
 Fires when a [tag](/integrations/tag) is scanned. For example, an NFC tag is
 scanned using the Home Assistant Companion mobile application.
@@ -638,7 +677,7 @@ automation:
         - d0609cb25f4a13922bb27d8f86e4c821
 ```
 
-## Template trigger
+### Template trigger
 
 Template triggers work by evaluating a [template](/docs/configuration/templating/) when any of the recognized entities change state. The trigger will fire if the state change caused the template to render 'true' (a non-zero number or any of the strings `true`, `yes`, `on`, `enable`) when it was previously 'false' (anything else).
 
@@ -685,11 +724,11 @@ Use of the `for` option will not survive Home Assistant restart or the reload of
 If for your use case this is undesired, you could consider using the automation to set an [`input_datetime`](/integrations/input_datetime) to the desired time and then use that [`input_datetime`](/integrations/input_datetime) as an automation trigger to perform the desired actions at the set time.
 {% endimportant %}
 
-## Time trigger
+### Time trigger
 
 The time trigger is configured to fire once a day at a specific time, or at a specific time on a specific date. There are three allowed formats:
 
-### Time string
+#### Time string
 
 A string that represents a time to fire on each day. Can be specified as `HH:MM` or `HH:MM:SS`. If the seconds are not specified, `:00` will be used.
 
@@ -701,7 +740,7 @@ automation:
       at: "15:32:00"
 ```
 
-### Input datetime
+#### Input datetime
 
 The entity ID of an [input datetime](/integrations/input_datetime/).
 
@@ -741,7 +780,7 @@ automation:
 
 {% endraw %}
 
-### Sensors of datetime device class
+#### Sensors of datetime device class
 
 The Entity ID of a [sensor](/integrations/sensor/) with the "timestamp" device class.
 
@@ -756,7 +795,7 @@ automation:
           entity_id: light.bedroom
 ```
 
-### Sensors of datetime device class with offsets
+#### Sensors of datetime device class with offsets
 
 When the time is provided using a sensor of the timestamp device class, an offset can be provided. This offset will be added to (or subtracted from when negative) the sensor value.
 
@@ -779,7 +818,7 @@ automation:
 When using a positive offset the trigger might never fire. This is due to the sensor changing before the offset is reached. For example, when using a phone alarm as a trigger, the sensor value will change to the new alarm time when the alarm goes off, which means this trigger will change to the new time as well.
 {% endimportant %}
 
-### Multiple times
+#### Multiple times
 
 Multiple times can be provided in a list. All formats can be intermixed.
 
@@ -794,7 +833,7 @@ automation:
           offset: "-00:10:00"
 ```
 
-### Limited templates
+#### Limited templates
 
 It's also possible to use [limited templates](/docs/configuration/templating/#limited-templates) for times.
 
@@ -826,7 +865,7 @@ blueprint:
 
 {% endraw %}
 
-### Weekday filtering
+#### Weekday filtering
 
 Time triggers can be filtered to fire only on specific days of the week using the `weekday` option. This allows you to create automations that only run on certain days, such as weekdays or weekends.
 
@@ -834,7 +873,7 @@ The `weekday` option accepts:
 - A single weekday as a string: `"mon"`, `"tue"`, `"wed"`, `"thu"`, `"fri"`, `"sat"`, `"sun"`
 - A list of weekdays using the expanded format
 
-#### Single weekday
+##### Single weekday
 
 This example will turn on the lights only on Mondays at 8:00 AM:
 
@@ -850,7 +889,7 @@ automation:
           entity_id: light.bedroom
 ```
 
-#### Multiple weekdays
+##### Multiple weekdays
 
 This example will run a morning routine only on weekdays (Monday through Friday) at 6:30 AM:
 
@@ -869,7 +908,7 @@ automation:
       - action: script.morning_routine
 ```
 
-#### Weekend example
+##### Weekend example
 
 This example demonstrates a different wake-up time for weekends:
 
@@ -899,7 +938,7 @@ automation:
       - action: script.weekend_morning
 ```
 
-#### Combined with input datetime
+##### Combined with input datetime
 
 The `weekday` option works with all time formats, including input datetime entities:
 
@@ -921,7 +960,7 @@ automation:
           message: "Time to start working"
 ```
 
-## Time pattern trigger
+### Time pattern trigger
 
 With the time pattern trigger, you can match if the hour, minute or second of the current time matches a specific value. You can prefix the value with a `/` to match whenever the value is divisible by that number. You can specify `*` to match any value.
 
@@ -950,7 +989,7 @@ automation 3:
 Do not prefix numbers with a zero - using `'01'` instead of `'1'` for example will result in errors.
 {% endnote %}
 
-## Persistent notification trigger
+### Persistent notification trigger
 
 Persistent notification triggers are fired when a `persistent_notification` is `added` or `removed` that matches the configuration options.
 
@@ -966,7 +1005,7 @@ automation:
 
 See the [Persistent Notification](/integrations/persistent_notification/) integration for more details on event triggers and the additional event data available for use by an automation.
 
-## Webhook trigger
+### Webhook trigger
 
 Webhook trigger fires when a web request is made to the webhook endpoint: `/api/webhook/<webhook_id>`. The webhook endpoint is created automatically when you set it as the `webhook_id` in an automation trigger. The `webhook_id` can either be a static value or computed using [limited templates](/docs/configuration/templating/#limited-templates).
 
@@ -1005,7 +1044,7 @@ Remember to use an HTTPS URL if you've secured your Home Assistant installation 
 
 Note that a given webhook can only be used in one automation at a time. That is, only one automation trigger can use a specific webhook ID.
 
-### Webhook data
+#### Webhook data
 
 Payloads may either be encoded as form data or JSON. Depending on that, its data will be available in an automation template as either `trigger.data` or `trigger.json`. URL query parameters are also available in the template as `trigger.query`.
 
@@ -1015,7 +1054,7 @@ Note that to use JSON encoded payloads, the `Content-Type` header must be set to
 curl -X POST -H "Content-Type: application/json" -d '{ "key": "value" }' https://your-home-assistant:8123/api/webhook/some_hook_id
 ```
 
-### Webhook security
+#### Webhook security
 
 Webhook endpoints don't require authentication, other than knowing a valid webhook ID. Security best practices for webhooks include:
 
@@ -1024,7 +1063,7 @@ Webhook endpoints don't require authentication, other than knowing a valid webho
 - Do not copy-and-paste webhook IDs from public sources, including blueprints. Always create your own.
 - Keep the `local_only` option enabled for webhooks if access from the internet is not required.
 
-## Zone trigger
+### Zone trigger
 
 Zone trigger fires when an entity is entering or leaving the zone. The entity can be either a person, or a device_tracker. For zone automation to work, you need to have setup a device tracker platform that supports reporting GPS coordinates. This includes [GPS Logger](/integrations/gpslogger/), the [OwnTracks platform](/integrations/owntracks/) and the [iCloud platform](/integrations/icloud/).
 
@@ -1038,7 +1077,7 @@ automation:
       event: enter # or "leave"
 ```
 
-## Geolocation trigger
+### Geolocation trigger
 
 Geolocation trigger fires when an entity is appearing in or disappearing from a zone. Entities that are created by a [Geolocation](/integrations/geo_location/) platform support reporting GPS coordinates.
 Because entities are generated and removed by these platforms automatically, the entity ID normally cannot be predicted. Instead, this trigger requires the definition of a `source`, which is directly linked to one of the Geolocation platforms.
@@ -1057,7 +1096,7 @@ automation:
       event: enter # or "leave"
 ```
 
-## Entity triggers
+### Entity triggers
 
 Entity triggers, also called *purpose-specific triggers*, let you trigger automations based on what an entity *does*. Instead of writing a [numeric state trigger](#numeric-state-trigger) or a [state trigger](#state-trigger) to detect a technical state change, you can say things like "When a light turns on" or "When the climate starts heating".
 
@@ -1065,7 +1104,7 @@ Entity triggers, also called *purpose-specific triggers*, let you trigger automa
 
 Entity triggers allow you to target a specific entity, an area, a floor, or a label. This means you can trigger when any light in your living room turns on, without listing each light individually or creating a group first. When you add or remove devices in an area, your automations automatically stay in sync. This also makes your automations much easier to read at a glance, since the target makes the intent of the automation immediately clear.
 
-### Entity trigger YAML structure
+#### Entity trigger YAML structure
 
 Entity triggers use the following YAML structure:
 
@@ -1080,13 +1119,13 @@ automation:
 
 The `trigger` key combines the entity domain and trigger type (such as `light.turned_on` or `humidity.changed`). Use the `target` key to specify which entity or entities to monitor. Use the `options` key to configure trigger-specific settings, such as `behavior`, `above`/`below` range limits, or `threshold_type`.
 
-### Unavailable and unknown state behavior
+#### Unavailable and unknown state behavior
 
 Most entity triggers do not fire when an entity transitions *from* an `unavailable` or `unknown` state. For example, if a light goes offline and comes back on, the `light.turned_on` trigger does not fire for that recovery.
 
 The exception is *origin-state triggers* — triggers that fire when an entity *leaves* a specific state. The `person.left_home` and `device_tracker.left_home` triggers fire whenever the entity changes *from* `home` to any other state, including `unavailable` or `unknown`. This means a device going offline while at home fires the `left_home` trigger. If you're using `left_home` to turn off lights when everyone has left, consider adding a [`person.is_not_home`](/integrations/person/#condition-person-is-not-home) or [`device_tracker.is_not_home`](/integrations/device_tracker/#condition-device-tracker-is-not-home) condition to avoid acting on unavailability.
 
-### List of entity trigger types
+#### List of entity trigger types
 
 The following trigger types are available per domain:
 
@@ -1107,7 +1146,7 @@ The following trigger types are available per domain:
 - **Update** (`trigger: update`): Fires when an update becomes available for a device or add-on (`update_became_available`). See [Update triggers](/integrations/update/#triggers).
 - **Vacuum** (`trigger: vacuum`): Fires when a vacuum cleaner starts cleaning, pauses, starts returning, docks, or encounters an error. See [Vacuum triggers](/integrations/vacuum/#triggers).
 
-### Example: Trigger when bedroom humidity rises above 70%
+#### Example: Trigger when bedroom humidity rises above 70%
 
 ```yaml
 automation:
@@ -1120,7 +1159,7 @@ automation:
         lower_limit: 70
 ```
 
-### Example: Trigger when the living room light turns on
+#### Example: Trigger when the living room light turns on
 
 ```yaml
 automation:
@@ -1132,7 +1171,7 @@ automation:
         behavior: any
 ```
 
-## Device triggers
+### Device triggers
 
 Device triggers encompass a set of events that are defined by an integration. This includes, for example, state changes of sensors as well as button events from remotes.
 [MQTT device triggers](/integrations/device_trigger.mqtt/) are set up through autodiscovery.
@@ -1141,7 +1180,7 @@ In contrast to state triggers, device triggers are tied to a device and not nece
 To use a device trigger, set up an automation through the browser frontend.
 If you would like to use a device trigger for an automation that is not managed through the browser frontend, you can copy the YAML from the trigger widget in the frontend and paste it into your automation's trigger list.
 
-## Calendar trigger
+### Calendar trigger
 
 Calendar trigger fires when a [Calendar](/integrations/calendar/) event starts or ends, allowing
 for much more flexible automations than using the Calendar entity state which only supports a single
@@ -1164,7 +1203,7 @@ automation:
 See the [Calendar](/integrations/calendar/) integration for more details on event triggers and the
 additional event data available for use by an automation.
 
-## Sentence trigger
+### Sentence trigger
 
 A sentence trigger fires when [Assist](/voice_control/) matches a sentence from a voice assistant using the default [conversation agent](/integrations/conversation/). Sentence triggers work with Home Assistant Assist. They will not work with external conversation agents such as OpenAI or Google Generative AI unless "Prefer handling commands locally" is enabled in the conversation agent settings.
 
@@ -1188,11 +1227,11 @@ The sentences matched by this trigger will be:
 
 Punctuation and casing are ignored, so "It's PARTY TIME!!!" will also match.
 
-### Related topic
+#### Related topic
 
 - [Adding a custom sentence to trigger an automation](/voice_control/custom_sentences/#adding-a-custom-sentence-to-trigger-an-automation)
 
-### Sentence wildcards
+#### Sentence wildcards
 
 Adding one or more `{lists}` to your trigger sentences will capture any text at that point in the sentence. A `slots` object will be [available in the trigger data](/docs/automation/templating#sentence).
 This allows you to match sentences with variable parts, such as album/artist names or a description of a picture.
