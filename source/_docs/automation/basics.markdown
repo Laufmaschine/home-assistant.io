@@ -79,6 +79,8 @@ Now that you've got a sneak peek of what is possible, it's time to get your feet
 
 ### Creating automations with the new Labs features
 
+{% include integrations/labs_entity_triggers_note.md %}
+
 After enabling the automation preview features in Labs, you can create an automation by following the steps below.
 
 #### Adding a trigger
@@ -88,13 +90,13 @@ After enabling the automation preview features in Labs, you can create an automa
 3. In the **When** section, select **Add trigger**.
 4. Now you can do one of the following:
     - _Select a target and then a trigger._
-      - Under **Targets**, select the entity, device or service to which you want to apply the trigger to. You can find the available entities, devices or services listed by:
+      - Under **By target**, select the entity, device or service to which you want to apply the trigger to. You can find the available entities, devices or services listed by:
         - Area of your home, in the **Home** section.
         - **Entities**, **Devices** and **Services**, in the **Unassigned** section.
         - Labels that you have previously created, in the **Labels** section.
       - For that target, you can see the available triggers on the right side. Select **+** on the desired one.
     - _Select a trigger._
-      - Select **Triggers**, and then select the trigger type from the list on the left.
+      - Select **By type**, and then select the trigger type from the list on the left.
       - From the listed triggers, select the **+** on the one you choose.
     - _Search for a trigger or target and then select a trigger._
       - Enter the name of one of the following in the search box:
