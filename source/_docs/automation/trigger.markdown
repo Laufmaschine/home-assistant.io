@@ -634,7 +634,7 @@ In general, the state trigger fires when the state of any of given entities **ch
 - If only the `entity_id` is given, the trigger fires for **all** state changes, even if only a state attribute changed.
 - If at least one of `from`, `to`, `not_from`, or `not_to` are given, the trigger fires on any matching state change, but not if only an attribute changed.
   - To trigger on all state changes, but not on changed attributes, set at least one of `from`, `to`, `not_from`, or `not_to` to `null`.
-- Use of the `for` option doesn't survive a Home Assistant restart or the reload of automations. 
+- Use of the `for` option doesn't survive a Home Assistant restart or the reload of automations.
   - During restart or reload, automations that were awaiting `for` the trigger to pass, are reset.
   - If for your use case this is undesired, you could consider using the automation to set an [`input_datetime`](/integrations/input_datetime) to the desired time and then use that [`input_datetime`](/integrations/input_datetime) as an automation trigger to perform the desired actions at the set time.
 
@@ -687,7 +687,7 @@ automation:
       to:
 ```
 
-If you want to trigger on all state changes *except* specific ones, use `not_from` or `not_to`  The `not_from` and `not_to` options are the counterparts of `from` and `to`. They can be used to trigger on state changes that are **not** the specified state.
+If you want to trigger on all state changes _except_ specific ones, use `not_from` or `not_to`  The `not_from` and `not_to` options are the counterparts of `from` and `to`. They can be used to trigger on state changes that are **not** the specified state.
 
 ```yaml
 automation:
@@ -1129,6 +1129,7 @@ blueprint:
 Time triggers can be filtered to fire only on specific days of the week using the `weekday` option. This allows you to create automations that only run on certain days, such as weekdays or weekends.
 
 The `weekday` option accepts:
+
 - A single weekday as a string: `"mon"`, `"tue"`, `"wed"`, `"thu"`, `"fri"`, `"sat"`, `"sun"`
 - A list of weekdays using the expanded format
 
@@ -1309,7 +1310,7 @@ automation:
 
 ### Entity triggers
 
-Entity triggers, also called *purpose-specific triggers*, let you trigger automations based on what an entity *does*. Instead of writing a [numeric state trigger](#numeric-state-trigger) or a [state trigger](#state-trigger) to detect a technical state change, you can say things like "When a light turns on" or "When the climate starts heating".
+Entity triggers, also called _purpose-specific triggers_, let you trigger automations based on what an entity _does_. Instead of writing a [numeric state trigger](#numeric-state-trigger) or a [state trigger](#state-trigger) to detect a technical state change, you can say things like "When a light turns on" or "When the climate starts heating".
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -1332,9 +1333,9 @@ The `trigger` key combines the entity domain and trigger type (such as `light.tu
 
 #### Unavailable and unknown state behavior
 
-Most entity triggers do not fire when an entity transitions *from* an `unavailable` or `unknown` state. For example, if a light goes offline and comes back on, the `light.turned_on` trigger does not fire for that recovery.
+Most entity triggers do not fire when an entity transitions _from_ an `unavailable` or `unknown` state. For example, if a light goes offline and comes back on, the `light.turned_on` trigger does not fire for that recovery.
 
-The exception is *origin-state triggers* — triggers that fire when an entity *leaves* a specific state. The `person.left_home` and `device_tracker.left_home` triggers fire whenever the entity changes *from* `home` to any other state, including `unavailable` or `unknown`. This means a device going offline while at home fires the `left_home` trigger. If you're using `left_home` to turn off lights when everyone has left, consider adding a [`person.is_not_home`](/integrations/person/#condition-person-is-not-home) or [`device_tracker.is_not_home`](/integrations/device_tracker/#condition-device-tracker-is-not-home) condition to avoid acting on unavailability.
+The exception is _origin-state triggers_ — triggers that fire when an entity _leaves_ a specific state. The `person.left_home` and `device_tracker.left_home` triggers fire whenever the entity changes _from_ `home` to any other state, including `unavailable` or `unknown`. This means a device going offline while at home fires the `left_home` trigger. If you're using `left_home` to turn off lights when everyone has left, consider adding a [`person.is_not_home`](/integrations/person/#condition-person-is-not-home) or [`device_tracker.is_not_home`](/integrations/device_tracker/#condition-device-tracker-is-not-home) condition to avoid acting on unavailability.
 
 #### Example: Trigger when bedroom humidity rises above 70%
 
