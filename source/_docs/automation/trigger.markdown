@@ -15,17 +15,30 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
     - [Video tutorial](#video-tutorial)
   - [Trigger variables](#trigger-variables)
 - [Types of triggers](#types-of-triggers)
+  - [Button trigger](#button-trigger)
   - [Calendar trigger](#calendar-trigger)
+  - [Climate trigger](#climate-trigger)
+  - [Device tracker trigger](#device-tracker-trigger)
   - [Device triggers](#device-triggers)
+  - [Door trigger](#door-trigger)
   - [Event trigger](#event-trigger)
+  - [Fan trigger](#fan-trigger)
+  - [Garage door](#garage-door)
   - [Geolocation trigger](#geolocation-trigger)
   - [Home Assistant trigger](#home-assistant-trigger)
+  - [Humidifier trigger](#humidifier-trigger)
+  - [Humidity trigger](#humidity-trigger)
+  - [Light trigger](#light-trigger)
+  - [Lock trigger](#lock-trigger)
   - [MQTT trigger](#mqtt-trigger)
   - [Numeric state trigger](#numeric-state-trigger)
   - [Persistent notification trigger](#persistent-notification-trigger)
+  - [Person trigger](#person-trigger)
+  - [Scene trigger](#scene-trigger)
   - [Sentence trigger](#sentence-trigger)
     - [Related topic](#related-topic)
     - [Sentence wildcards](#sentence-wildcards)
+  - [Siren trigger](#siren-trigger)
   - [State trigger](#state-trigger)
     - [Examples](#examples)
     - [Triggering on attribute changes](#triggering-on-attribute-changes)
@@ -48,6 +61,8 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
       - [Multiple weekdays](#multiple-weekdays)
       - [Weekend example](#weekend-example)
       - [Combined with input datetime](#combined-with-input-datetime)
+  - [Update trigger](#update-trigger)
+  - [Vacuum trigger](#vacuum-trigger)
   - [Webhook trigger](#webhook-trigger)
     - [Webhook data](#webhook-data)
     - [Webhook security](#webhook-security)
@@ -55,7 +70,6 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
   - [Entity triggers](#entity-triggers)
     - [Entity trigger YAML structure](#entity-trigger-yaml-structure)
     - [Unavailable and unknown state behavior](#unavailable-and-unknown-state-behavior)
-    - [List of entity trigger types](#list-of-entity-trigger-types)
     - [Example: Trigger when bedroom humidity rises above 70%](#example-trigger-when-bedroom-humidity-rises-above-70)
     - [Example: Trigger when the living room light turns on](#example-trigger-when-the-living-room-light-turns-on)
 - [Multiple triggers](#multiple-triggers)
@@ -125,6 +139,14 @@ automation:
 
 Each trigger has a type that depends on the target of the trigger. The following types are available.
 
+### Button trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a button entity is pressed. See [Button triggers](/integrations/button/#triggers).
+
+In YAML, use: `trigger: button`.
+
 ### Calendar trigger
 
 Calendar trigger fires when a [Calendar](/integrations/calendar/) event starts or ends, allowing
@@ -148,6 +170,22 @@ automation:
 See the [Calendar](/integrations/calendar/) integration for more details on event triggers and the
 additional event data available for use by an automation.
 
+### Climate trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a climate device turns on or off, starts heating, cooling, or drying, when the HVAC mode changes, or when a target temperature or humidity setpoint changes or crosses a threshold. See [Climate triggers](/integrations/climate/#triggers).
+
+In YAML, use: `trigger: climate`.
+
+### Device tracker trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a tracked device arrives home or leaves home, or when the first device arrives or the last device leaves. See [Device tracker integration](/integrations/device_tracker/#triggers).
+
+In YAML, use: `trigger: device_tracker`.
+
 ### Device triggers
 
 Device triggers encompass a set of events that are defined by an integration. This includes, for example, state changes of sensors as well as button events from remotes.
@@ -156,6 +194,14 @@ Device triggers encompass a set of events that are defined by an integration. Th
 In contrast to state triggers, device triggers are tied to a device and not necessarily an entity.
 To use a device trigger, set up an automation through the browser frontend.
 If you would like to use a device trigger for an automation that is not managed through the browser frontend, you can copy the YAML from the trigger widget in the frontend and paste it into your automation's trigger list.
+
+### Door trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a door opens or closes. See [Door triggers](/integrations/door/).
+
+In YAML, use: `trigger: door`.
 
 ### Event trigger
 
@@ -211,6 +257,22 @@ automation:
 
 {% endraw %}
 
+### Fan trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a fan turns on or turns off. See [Fan triggers](/integrations/fan/#triggers).
+
+In YAML, use: `trigger: fan`.
+
+### Garage door
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a garage door opens or closes. See [Garage door triggers](/integrations/garage_door/).
+
+In YAML, use: `trigger: door`.
+
 ### Geolocation trigger
 
 Geolocation trigger fires when an entity is appearing in or disappearing from a zone. Entities that are created by a [Geolocation](/integrations/geo_location/) platform support reporting GPS coordinates.
@@ -245,6 +307,38 @@ automation:
 {% note %}
 Automations triggered by the `shutdown` event have 20 seconds to run, after which they are stopped to continue with the shutdown.
 {% endnote %}
+
+### Humidifier trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a humidifier turns on or off, or starts humidifying or drying. See [Humidifier triggers](/integrations/humidifier/#triggers).
+
+In YAML, use: `trigger: humidifier`.
+
+### Humidity trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when humidity changes or crosses a threshold on a humidity sensor, climate, humidifier, or weather entity. See [Humidity triggers](/integrations/humidity/).
+
+In YAML, use: `trigger: humidity`.
+
+### Light trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a light turns on or off, or when its brightness changes or crosses a threshold. See [Light triggers](/integrations/light/#triggers).
+
+In YAML, use: `trigger: light`.
+
+### Lock trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a lock is locked, unlocked, opened, or jammed. See [Lock triggers](/integrations/lock/#triggers).
+
+In YAML, use: `trigger: lock`.
 
 ### MQTT trigger
 
@@ -464,6 +558,22 @@ automation:
 
 See the [Persistent Notification](/integrations/persistent_notification/) integration for more details on event triggers and the additional event data available for use by an automation.
 
+### Person trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a person arrives home or leaves home. See [Person triggers](/integrations/person/#triggers).
+
+In YAML, use: `trigger: person`.
+
+### Scene trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a scene is activated. See [Scene triggers](/integrations/scene/#triggers).
+
+In YAML, use: `trigger: scene`.
+
 ### Sentence trigger
 
 A sentence trigger fires when [Assist](/voice_control/) matches a sentence from a voice assistant using the default [conversation agent](/integrations/conversation/). Sentence triggers work with Home Assistant Assist. They will not work with external conversation agents such as OpenAI or Google Generative AI unless "Prefer handling commands locally" is enabled in the conversation agent settings.
@@ -508,6 +618,14 @@ For example, the sentence `play {album} by {artist}` will match "play the white 
 
 Wildcards will match as much text as possible, which may lead to surprises: "play day by day by taken by trees" will match `album` as "day" and `artist` as "day by taken by trees".
 Including extra words in your template can help: `play {album} by artist {artist}` can now correctly match "play day by day by artist taken by trees".
+
+### Siren trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a siren turns on or turns off. See [Siren triggers](/integrations/siren/#triggers).
+
+In YAML, use: `trigger: siren`.
 
 ### State trigger
 
@@ -1101,6 +1219,22 @@ automation:
           message: "Time to start working"
 ```
 
+### Update trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when an update becomes available for a device or add-on (`update_became_available`). See [Update triggers](/integrations/update/#triggers).
+
+In YAML, use: `trigger: update`.
+
+### Vacuum trigger
+
+{% include integrations/labs_entity_triggers_note.md %}
+
+Fires when a vacuum cleaner starts cleaning, pauses, starts returning, docks, or encounters an error. See [Vacuum triggers](/integrations/vacuum/#triggers).
+
+In YAML, use: `trigger: vacuum`.
+
 ### Webhook trigger
 
 Webhook trigger fires when a web request is made to the webhook endpoint: `/api/webhook/<webhook_id>`. The webhook endpoint is created automatically when you set it as the `webhook_id` in an automation trigger. The `webhook_id` can either be a static value or computed using [limited templates](/docs/configuration/templating/#limited-templates).
@@ -1201,27 +1335,6 @@ The `trigger` key combines the entity domain and trigger type (such as `light.tu
 Most entity triggers do not fire when an entity transitions *from* an `unavailable` or `unknown` state. For example, if a light goes offline and comes back on, the `light.turned_on` trigger does not fire for that recovery.
 
 The exception is *origin-state triggers* — triggers that fire when an entity *leaves* a specific state. The `person.left_home` and `device_tracker.left_home` triggers fire whenever the entity changes *from* `home` to any other state, including `unavailable` or `unknown`. This means a device going offline while at home fires the `left_home` trigger. If you're using `left_home` to turn off lights when everyone has left, consider adding a [`person.is_not_home`](/integrations/person/#condition-person-is-not-home) or [`device_tracker.is_not_home`](/integrations/device_tracker/#condition-device-tracker-is-not-home) condition to avoid acting on unavailability.
-
-#### List of entity trigger types
-
-The following trigger types are available per domain:
-
-- **Button** (`trigger: button`): Fires when a button entity is pressed. See [Button triggers](/integrations/button/#triggers).
-- **Calendar** (`trigger: calendar`): Fires when a calendar event starts or ends.
-- **Climate** (`trigger: climate`): Fires when a climate device turns on or off, starts heating, cooling, or drying, when the HVAC mode changes, or when a target temperature or humidity setpoint changes or crosses a threshold. See [Climate triggers](/integrations/climate/#triggers).
-- **Device tracker** (`trigger: device_tracker`): Fires when a tracked device arrives home or leaves home, or when the first device arrives or the last device leaves. See [Device tracker triggers](/integrations/device_tracker/#triggers).
-- **Door** (`trigger: door`): Fires when a door opens or closes. See [Door triggers](/integrations/door/).
-- **Fan** (`trigger: fan`): Fires when a fan turns on or turns off. See [Fan triggers](/integrations/fan/#triggers).
-- **Garage door** (`trigger: door`): Fires when a garage door opens or closes. See [Garage door triggers](/integrations/garage_door/).
-- **Humidity** (`trigger: humidity`): Fires when humidity changes or crosses a threshold on a humidity sensor, climate, humidifier, or weather entity. See [Humidity triggers](/integrations/humidity/).
-- **Humidifier** (`trigger: humidifier`): Fires when a humidifier turns on or off, or starts humidifying or drying. See [Humidifier triggers](/integrations/humidifier/#triggers).
-- **Light** (`trigger: light`): Fires when a light turns on or off, or when its brightness changes or crosses a threshold. See [Light triggers](/integrations/light/#triggers).
-- **Lock** (`trigger: lock`): Fires when a lock is locked, unlocked, opened, or jammed. See [Lock triggers](/integrations/lock/#triggers).
-- **Person** (`trigger: person`): Fires when a person arrives home or leaves home. See [Person triggers](/integrations/person/#triggers).
-- **Scene** (`trigger: scene`): Fires when a scene is activated. See [Scene triggers](/integrations/scene/#triggers).
-- **Siren** (`trigger: siren`): Fires when a siren turns on or turns off. See [Siren triggers](/integrations/siren/#triggers).
-- **Update** (`trigger: update`): Fires when an update becomes available for a device or add-on (`update_became_available`). See [Update triggers](/integrations/update/#triggers).
-- **Vacuum** (`trigger: vacuum`): Fires when a vacuum cleaner starts cleaning, pauses, starts returning, docks, or encounters an error. See [Vacuum triggers](/integrations/vacuum/#triggers).
 
 #### Example: Trigger when bedroom humidity rises above 70%
 
