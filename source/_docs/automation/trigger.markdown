@@ -67,11 +67,9 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
     - [Webhook data](#webhook-data)
     - [Webhook security](#webhook-security)
   - [Zone trigger](#zone-trigger)
-  - [Entity triggers](#entity-triggers)
-    - [Entity trigger YAML structure](#entity-trigger-yaml-structure)
-    - [Unavailable and unknown state behavior](#unavailable-and-unknown-state-behavior)
-    - [Example: Trigger when bedroom humidity rises above 70%](#example-trigger-when-bedroom-humidity-rises-above-70)
-    - [Example: Trigger when the living room light turns on](#example-trigger-when-the-living-room-light-turns-on)
+- [Unavailable and unknown state behavior in triggers](#unavailable-and-unknown-state-behavior-in-triggers)
+- [Example: Trigger when bedroom humidity rises above 70%](#example-trigger-when-bedroom-humidity-rises-above-70)
+- [Example: Trigger when the living room light turns on](#example-trigger-when-the-living-room-light-turns-on)
 - [Multiple triggers](#multiple-triggers)
 - [Multiple entity IDs for the same trigger](#multiple-entity-ids-for-the-same-trigger)
 - [Disabling a trigger](#disabling-a-trigger)
@@ -1308,36 +1306,13 @@ automation:
       event: enter # or "leave"
 ```
 
-### Entity triggers
+## Unavailable and unknown state behavior in triggers
 
-Entity triggers, also called _purpose-specific triggers_, let you trigger automations based on what an entity _does_. Instead of writing a [numeric state trigger](#numeric-state-trigger) or a [state trigger](#state-trigger) to detect a technical state change, you can say things like "When a light turns on" or "When the climate starts heating".
-
-{% include integrations/labs_entity_triggers_note.md %}
-
-Entity triggers allow you to target a specific entity, an area, a floor, or a label. This means you can trigger when any light in your living room turns on, without listing each light individually or creating a group first. When you add or remove devices in an area, your automations automatically stay in sync. This also makes your automations much easier to read at a glance, since the target makes the intent of the automation immediately clear.
-
-#### Entity trigger YAML structure
-
-Entity triggers use the following YAML structure:
-
-```yaml
-automation:
-  triggers:
-    - trigger: <domain>.<trigger_type>
-      target:
-        entity_id: <entity_id>
-      options: {}
-```
-
-The `trigger` key combines the entity domain and trigger type (such as `light.turned_on` or `humidity.changed`). Use the `target` key to specify which entity or entities to monitor. Use the `options` key to configure trigger-specific settings, such as `behavior`, `above`/`below` range limits, or `threshold_type`.
-
-#### Unavailable and unknown state behavior
-
-Most entity triggers do not fire when an entity transitions _from_ an `unavailable` or `unknown` state. For example, if a light goes offline and comes back on, the `light.turned_on` trigger does not fire for that recovery.
+Most triggers that have an entity as the target do not fire when an entity transitions _from_ an `unavailable` or `unknown` state. For example, if a light goes offline and comes back on, the `light.turned_on` trigger does not fire for that recovery.
 
 The exception is _origin-state triggers_ — triggers that fire when an entity _leaves_ a specific state. The `person.left_home` and `device_tracker.left_home` triggers fire whenever the entity changes _from_ `home` to any other state, including `unavailable` or `unknown`. This means a device going offline while at home fires the `left_home` trigger. If you're using `left_home` to turn off lights when everyone has left, consider adding a [`person.is_not_home`](/integrations/person/#condition-person-is-not-home) or [`device_tracker.is_not_home`](/integrations/device_tracker/#condition-device-tracker-is-not-home) condition to avoid acting on unavailability.
 
-#### Example: Trigger when bedroom humidity rises above 70%
+## Example: Trigger when bedroom humidity rises above 70%
 
 ```yaml
 automation:
@@ -1350,7 +1325,7 @@ automation:
         lower_limit: 70
 ```
 
-#### Example: Trigger when the living room light turns on
+## Example: Trigger when the living room light turns on
 
 ```yaml
 automation:
