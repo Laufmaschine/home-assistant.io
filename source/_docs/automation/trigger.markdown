@@ -28,7 +28,9 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
   - [Home Assistant trigger](#home-assistant-trigger)
   - [Humidifier triggers](#humidifier-triggers)
   - [Humidity triggers](#humidity-triggers)
+    - [Example: Trigger when bedroom humidity rises above 70%](#example-trigger-when-bedroom-humidity-rises-above-70)
   - [Light triggers](#light-triggers)
+    - [Example: Trigger when the living room light turns on](#example-trigger-when-the-living-room-light-turns-on)
   - [Lock triggers](#lock-triggers)
   - [MQTT trigger](#mqtt-trigger)
   - [Numeric state trigger](#numeric-state-trigger)
@@ -68,8 +70,6 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
     - [Webhook security](#webhook-security)
   - [Zone trigger](#zone-trigger)
 - [Unavailable and unknown state behavior in triggers](#unavailable-and-unknown-state-behavior-in-triggers)
-- [Example: Trigger when bedroom humidity rises above 70%](#example-trigger-when-bedroom-humidity-rises-above-70)
-- [Example: Trigger when the living room light turns on](#example-trigger-when-the-living-room-light-turns-on)
 - [Multiple triggers](#multiple-triggers)
 - [Multiple entity IDs for the same trigger](#multiple-entity-ids-for-the-same-trigger)
 - [Disabling a trigger](#disabling-a-trigger)
@@ -322,6 +322,19 @@ Fires when humidity changes or crosses a threshold on a humidity sensor, climate
 
 In YAML, use: `trigger: humidity`.
 
+#### Example: Trigger when bedroom humidity rises above 70%
+
+```yaml
+automation:
+  triggers:
+    - trigger: humidity.crossed_threshold
+      target:
+        entity_id: sensor.bedroom_humidity
+      options:
+        threshold_type: above
+        lower_limit: 70
+```
+
 ### Light triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
@@ -329,6 +342,18 @@ In YAML, use: `trigger: humidity`.
 Fires when a light turns on or off, or when its brightness changes or crosses a threshold. See [Light triggers](/integrations/light/#triggers).
 
 In YAML, use: `trigger: light`.
+
+#### Example: Trigger when the living room light turns on
+
+```yaml
+automation:
+  triggers:
+    - trigger: light.turned_on
+      target:
+        entity_id: light.living_room
+      options:
+        behavior: any
+```
 
 ### Lock triggers
 
@@ -1311,31 +1336,6 @@ automation:
 Most triggers that have an entity as the target do not fire when an entity transitions _from_ an `unavailable` or `unknown` state. For example, if a light goes offline and comes back on, the `light.turned_on` trigger does not fire for that recovery.
 
 The exception is _origin-state triggers_ — triggers that fire when an entity _leaves_ a specific state. The `person.left_home` and `device_tracker.left_home` triggers fire whenever the entity changes _from_ `home` to any other state, including `unavailable` or `unknown`. This means a device going offline while at home fires the `left_home` trigger. If you're using `left_home` to turn off lights when everyone has left, consider adding a [`person.is_not_home`](/integrations/person/#condition-person-is-not-home) or [`device_tracker.is_not_home`](/integrations/device_tracker/#condition-device-tracker-is-not-home) condition to avoid acting on unavailability.
-
-## Example: Trigger when bedroom humidity rises above 70%
-
-```yaml
-automation:
-  triggers:
-    - trigger: humidity.crossed_threshold
-      target:
-        entity_id: sensor.bedroom_humidity
-      options:
-        threshold_type: above
-        lower_limit: 70
-```
-
-## Example: Trigger when the living room light turns on
-
-```yaml
-automation:
-  triggers:
-    - trigger: light.turned_on
-      target:
-        entity_id: light.living_room
-      options:
-        behavior: any
-```
 
 ## Multiple triggers
 
