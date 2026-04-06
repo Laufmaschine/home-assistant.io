@@ -16,29 +16,29 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
   - [Trigger variables](#trigger-variables)
 - [Types of triggers](#types-of-triggers)
   - [Button trigger](#button-trigger)
-  - [Calendar trigger](#calendar-trigger)
-  - [Climate trigger](#climate-trigger)
-  - [Device tracker trigger](#device-tracker-trigger)
+  - [Calendar triggers](#calendar-triggers)
+  - [Climate triggers](#climate-triggers)
+  - [Device tracker triggers](#device-tracker-triggers)
   - [Device triggers](#device-triggers)
-  - [Door trigger](#door-trigger)
+  - [Door triggers](#door-triggers)
   - [Event trigger](#event-trigger)
-  - [Fan trigger](#fan-trigger)
-  - [Garage door](#garage-door)
+  - [Fan triggers](#fan-triggers)
+  - [Garage door triggers](#garage-door-triggers)
   - [Geolocation trigger](#geolocation-trigger)
   - [Home Assistant trigger](#home-assistant-trigger)
-  - [Humidifier trigger](#humidifier-trigger)
-  - [Humidity trigger](#humidity-trigger)
-  - [Light trigger](#light-trigger)
-  - [Lock trigger](#lock-trigger)
+  - [Humidifier triggers](#humidifier-triggers)
+  - [Humidity triggers](#humidity-triggers)
+  - [Light triggers](#light-triggers)
+  - [Lock triggers](#lock-triggers)
   - [MQTT trigger](#mqtt-trigger)
   - [Numeric state trigger](#numeric-state-trigger)
   - [Persistent notification trigger](#persistent-notification-trigger)
-  - [Person trigger](#person-trigger)
+  - [Person triggers](#person-triggers)
   - [Scene trigger](#scene-trigger)
   - [Sentence trigger](#sentence-trigger)
     - [Related topic](#related-topic)
     - [Sentence wildcards](#sentence-wildcards)
-  - [Siren trigger](#siren-trigger)
+  - [Siren triggers](#siren-triggers)
   - [State trigger](#state-trigger)
     - [Examples](#examples)
     - [Triggering on attribute changes](#triggering-on-attribute-changes)
@@ -62,7 +62,7 @@ An {% term automation %} can be triggered by an {% term event %}, a certain {% t
       - [Weekend example](#weekend-example)
       - [Combined with input datetime](#combined-with-input-datetime)
   - [Update trigger](#update-trigger)
-  - [Vacuum trigger](#vacuum-trigger)
+  - [Vacuum triggers](#vacuum-triggers)
   - [Webhook trigger](#webhook-trigger)
     - [Webhook data](#webhook-data)
     - [Webhook security](#webhook-security)
@@ -147,7 +147,7 @@ Fires when a button entity is pressed. See [Button triggers](/integrations/butto
 
 In YAML, use: `trigger: button`.
 
-### Calendar trigger
+### Calendar triggers
 
 Calendar trigger fires when a [Calendar](/integrations/calendar/) event starts or ends, allowing
 for much more flexible automations than using the Calendar entity state which only supports a single
@@ -170,7 +170,7 @@ automation:
 See the [Calendar](/integrations/calendar/) integration for more details on event triggers and the
 additional event data available for use by an automation.
 
-### Climate trigger
+### Climate triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -178,7 +178,7 @@ Fires when a climate device turns on or off, starts heating, cooling, or drying,
 
 In YAML, use: `trigger: climate`.
 
-### Device tracker trigger
+### Device tracker triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -195,7 +195,7 @@ In contrast to state triggers, device triggers are tied to a device and not nece
 To use a device trigger, set up an automation through the browser frontend.
 If you would like to use a device trigger for an automation that is not managed through the browser frontend, you can copy the YAML from the trigger widget in the frontend and paste it into your automation's trigger list.
 
-### Door trigger
+### Door triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -257,7 +257,7 @@ automation:
 
 {% endraw %}
 
-### Fan trigger
+### Fan triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -265,7 +265,7 @@ Fires when a fan turns on or turns off. See [Fan triggers](/integrations/fan/#tr
 
 In YAML, use: `trigger: fan`.
 
-### Garage door
+### Garage door triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -308,7 +308,7 @@ automation:
 Automations triggered by the `shutdown` event have 20 seconds to run, after which they are stopped to continue with the shutdown.
 {% endnote %}
 
-### Humidifier trigger
+### Humidifier triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -316,7 +316,7 @@ Fires when a humidifier turns on or off, or starts humidifying or drying. See [H
 
 In YAML, use: `trigger: humidifier`.
 
-### Humidity trigger
+### Humidity triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -324,7 +324,7 @@ Fires when humidity changes or crosses a threshold on a humidity sensor, climate
 
 In YAML, use: `trigger: humidity`.
 
-### Light trigger
+### Light triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -332,7 +332,7 @@ Fires when a light turns on or off, or when its brightness changes or crosses a 
 
 In YAML, use: `trigger: light`.
 
-### Lock trigger
+### Lock triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -558,7 +558,7 @@ automation:
 
 See the [Persistent Notification](/integrations/persistent_notification/) integration for more details on event triggers and the additional event data available for use by an automation.
 
-### Person trigger
+### Person triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -619,7 +619,7 @@ For example, the sentence `play {album} by {artist}` will match "play the white 
 Wildcards will match as much text as possible, which may lead to surprises: "play day by day by taken by trees" will match `album` as "day" and `artist` as "day by taken by trees".
 Including extra words in your template can help: `play {album} by artist {artist}` can now correctly match "play day by day by artist taken by trees".
 
-### Siren trigger
+### Siren triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
@@ -1228,7 +1228,7 @@ Fires when an update becomes available for a device or add-on (`update_became_av
 
 In YAML, use: `trigger: update`.
 
-### Vacuum trigger
+### Vacuum triggers
 
 {% include integrations/labs_entity_triggers_note.md %}
 
