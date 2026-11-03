@@ -117,6 +117,7 @@ In YAML, the name is stored in `alias`.
 
 - To add a copy in the same automation, in the **Menu** {% icon "mdi:dots-vertical" %} of the row, select **Duplicate**.
 - To copy or move it, in the **Menu** {% icon "mdi:dots-vertical" %} of the row, select **Copy** or **Cut**. Then, in the **Menu** {% icon "mdi:dots-vertical" %} of another row of the same kind, select **Paste**. The copy is inserted after that row. You can also paste it in another automation that you open in the same browser tab.
+- If you cut a row by mistake, select **Undo** in the message that appears, or [undo the change](#undoing-and-redoing-changes).
 - To change the order, drag the row by its handle {% icon "mdi:drag-horizontal-variant" %}.
 
 ### Turning off a trigger, condition, or action
